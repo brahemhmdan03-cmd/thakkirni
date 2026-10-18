@@ -17,6 +17,7 @@ class Brand {
     final dark = b == Brightness.dark;
     return ThemeData(
       useMaterial3: true,
+      fontFamily: 'Tajawal',
       colorScheme: scheme,
       scaffoldBackgroundColor: dark ? const Color(0xFF0F0D1C) : const Color(0xFFF6F5FB),
       cardTheme: CardThemeData(

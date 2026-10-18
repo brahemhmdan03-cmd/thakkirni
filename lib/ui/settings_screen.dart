@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 import '../core/models.dart';
+import '../core/platform.dart';
 import '../core/store.dart';
 import '../services/notifications.dart';
 import '../services/voice.dart';
@@ -133,11 +132,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             ListTile(
               leading: Icon(
-                Platform.isIOS ? Icons.mic_external_on_rounded : Icons.assistant_rounded,
+                isIOS ? Icons.mic_external_on_rounded : Icons.assistant_rounded,
                 color: context.colors.primary,
               ),
               title: Text(
-                Platform.isIOS ? s.siriHelpIos : s.assistantHelpAndroid,
+                isIOS ? s.siriHelpIos : s.assistantHelpAndroid,
                 style: const TextStyle(height: 1.45),
               ),
               subtitle: Padding(
@@ -163,7 +162,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
               ),
             ),
-            if (Platform.isAndroid && !_exactOk)
+            if (isAndroid && !_exactOk)
               ListTile(
                 leading: const Icon(Icons.alarm_on_rounded, color: Brand.amber),
                 title: Text(s.exactAlarms),

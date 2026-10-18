@@ -1,9 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+
+import '../core/platform.dart';
 
 /// Microphone in, voice out. One shared instance for the whole app.
 class Voice {
@@ -38,7 +39,7 @@ class Voice {
   Future<void> _initTts() async {
     if (_ttsReady) return;
     await _tts.awaitSpeakCompletion(true);
-    if (Platform.isIOS) await _tts.setSharedInstance(true);
+    if (isIOS) await _tts.setSharedInstance(true);
     _ttsReady = true;
   }
 
@@ -139,7 +140,7 @@ class Voice {
   /// Speaks and waits until finished.
   Future<void> speak(String text, String lang) async {
     await _initTts();
-    if (Platform.isIOS) {
+    if (isIOS) {
       // The recognizer leaves the session in record mode; route speech to the loudspeaker.
       await _tts.setIosAudioCategory(IosTextToSpeechAudioCategory.playAndRecord, [
         IosTextToSpeechAudioCategoryOptions.defaultToSpeaker,
@@ -148,7 +149,7 @@ class Voice {
       ], IosTextToSpeechAudioMode.voicePrompt);
     }
     await _tts.setLanguage(lang == 'ar' ? 'ar-SA' : 'en-US');
-    await _tts.setSpeechRate(Platform.isIOS ? 0.5 : 0.95);
+    await _tts.setSpeechRate(isIOS ? 0.5 : 0.95);
     await _tts.setPitch(1.0);
     await _tts.speak(text);
   }

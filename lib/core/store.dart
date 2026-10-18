@@ -72,7 +72,7 @@ class AppStore extends ChangeNotifier {
     return id;
   }
 
-  String _newId() => '${DateTime.now().microsecondsSinceEpoch}-${Random().nextInt(1 << 32)}';
+  String _newId() => '${DateTime.now().microsecondsSinceEpoch}-${Random().nextInt(1 << 30)}';
 
   // -------------------------------------------------------------- queries
 

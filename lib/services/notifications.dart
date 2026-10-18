@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
-import 'dart:ui';
+
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -12,6 +12,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../core/models.dart';
 import '../core/parser.dart';
+import '../core/platform.dart';
 import '../core/strings.dart';
 
 /// A tap on a notification or one of its buttons.
@@ -41,6 +42,7 @@ class Notifications {
   S get _s => S.of(PlatformDispatcher.instance.locale.languageCode == 'ar' ? 'ar' : 'en');
 
   Future<void> init() async {
+    if (kIsWeb) return; // browser preview: no scheduled notifications
     tzdata.initializeTimeZones();
     try {
       final info = await FlutterTimezone.getLocalTimezone();
@@ -100,7 +102,8 @@ class Notifications {
 
   /// Asks for notification (and on Android exact-alarm) permission.
   Future<bool> requestPermissions() async {
-    if (Platform.isIOS) {
+    if (kIsWeb) return false;
+    if (isIOS) {
       final ios = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
       return await ios?.requestPermissions(alert: true, sound: true, badge: true) ?? false;
     }
@@ -113,12 +116,13 @@ class Notifications {
   }
 
   Future<bool> canScheduleExact() async {
-    if (!Platform.isAndroid) return true;
+    if (!isAndroid) return true;
     final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     return await android?.canScheduleExactNotifications() ?? true;
   }
 
   Future<void> requestExactAlarms() async {
+    if (kIsWeb) return;
     final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     await android?.requestExactAlarmsPermission();
   }
@@ -169,11 +173,13 @@ class Notifications {
   }
 
   Future<void> cancelFor(Reminder r) async {
+    if (kIsWeb) return;
     await _plugin.cancel(id: r.notificationId);
     await _plugin.cancel(id: r.notificationId + 1);
   }
 
   Future<void> scheduleTask(Reminder r, Settings settings) async {
+    if (kIsWeb) return;
     await cancelFor(r);
     if (r.done || r.isIdea || r.due == null) return;
     final s = S.of(ReminderParser.isArabic(r.text) ? 'ar' : 'en');
@@ -195,6 +201,7 @@ class Notifications {
   /// Spreads open ideas over the free-time window for the coming days.
   /// Ideas shown least often come first, so all of them come back in turn.
   Future<void> rescheduleIdeas(List<Reminder> items, Settings settings) async {
+    if (kIsWeb) return;
     final prefs = await SharedPreferences.getInstance();
     final now = DateTime.now();
 
@@ -262,6 +269,7 @@ class Notifications {
   }
 
   Future<void> showTest() async {
+    if (kIsWeb) return;
     final s = _s;
     await _plugin.show(
       id: 999999,
