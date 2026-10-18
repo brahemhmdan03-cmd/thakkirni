@@ -48,6 +48,14 @@ android {
         }
     }
 
+    // Extract native libraries at install time: some emulators (BlueStacks) and older
+    // phones refuse APKs that keep them uncompressed inside the package.
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
     buildTypes {
         release {
             signingConfig = if (keystoreProperties.isNotEmpty()) {
