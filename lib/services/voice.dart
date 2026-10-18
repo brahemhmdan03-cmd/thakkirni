@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -45,6 +46,8 @@ class Voice {
 
   /// Picks the recognizer locale id for 'ar' or 'en'.
   String localeFor(String lang, {String? preferredArabic}) {
+    // Browsers take BCP 47 tags and do not list their languages.
+    if (kIsWeb) return lang == 'ar' ? 'ar-SA' : 'en-US';
     String norm(String s) => s.replaceAll('-', '_').toLowerCase();
     final ids = _locales.map((l) => l.localeId).toList();
     String? find(List<String> wanted) {

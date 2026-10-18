@@ -6,6 +6,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   test:
@@ -58,3 +60,25 @@ jobs:
           channel: stable
           flutter-version: 3.47.7
       - run: flutter build ios --release --no-codesign
+
+  # The browser version at https://brahemhmdan03-cmd.github.io/thakkirni/
+  web:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.7
+      - run: flutter build web --release --no-web-resources-cdn --base-href /thakkirni/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+      - id: deploy
+        uses: actions/deploy-pages@v4
