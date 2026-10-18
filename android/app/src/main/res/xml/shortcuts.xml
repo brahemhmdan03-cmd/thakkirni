@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="listen"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_listen_short"
+        android:shortcutLongLabel="@string/shortcut_listen_long">
+        <intent
+            android:action="com.thakkirni.LISTEN"
+            android:targetPackage="com.thakkirni.thakkirni"
+            android:targetClass="com.thakkirni.thakkirni.MainActivity" />
+    </shortcut>
+</shortcuts>
